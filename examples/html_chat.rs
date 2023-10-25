@@ -40,7 +40,7 @@ struct Server {
 
 impl Handler for Server {
     //
-    fn on_request(&mut self, req: &Request) -> Result<(Response)> {
+    fn on_request(&mut self, req: &Request) -> Result<Response> {
         // Using multiple handlers is better (see router example)
         match req.resource() {
             // The default trait implementation

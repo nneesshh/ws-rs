@@ -5,15 +5,15 @@ use native_tls::{TlsConnector, TlsStream as SslStream};
 use openssl::ssl::{SslConnector, SslMethod, SslStream};
 use url;
 
-use frame::Frame;
-use handshake::{Handshake, Request, Response};
-use message::Message;
-use protocol::CloseCode;
-use result::{Error, Kind, Result};
-use util::{Timeout, Token};
+use super::frame::Frame;
+use super::handshake::{Handshake, Request, Response};
+use super::message::Message;
+use super::protocol::CloseCode;
+use super::result::{Error, Kind, Result};
+use super::util::{Timeout, Token};
 
 #[cfg(any(feature = "ssl", feature = "nativetls"))]
-use util::TcpStream;
+use super::util::TcpStream;
 
 /// The core trait of this library.
 /// Implementing this trait provides the business logic of the WebSocket application.
@@ -350,12 +350,13 @@ where
 mod test {
     #![allow(unused_imports, unused_variables, dead_code)]
     use super::*;
-    use frame;
-    use handshake::{Handshake, Request, Response};
-    use message;
+    use crate::frame;
+    use crate::handshake::{Handshake, Request, Response};
+    use crate::message;
+    use crate::protocol::CloseCode;
+    use crate::result::Result;
+
     use mio;
-    use protocol::CloseCode;
-    use result::Result;
     use url;
 
     #[derive(Debug, Eq, PartialEq)]
@@ -403,7 +404,8 @@ mod test {
             response: res,
             peer_addr: None,
             local_addr: None,
-        }).unwrap();
+        })
+        .unwrap();
         h.on_message(message::Message::Text("testme".to_owned()))
             .unwrap();
         h.on_close(CloseCode::Normal, "");

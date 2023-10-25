@@ -1,6 +1,6 @@
 use std::mem;
-use std::slice;
 use std::mem::MaybeUninit;
+use std::slice;
 
 use super::ffi;
 use super::libc::{c_char, c_int, c_uint};

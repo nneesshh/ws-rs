@@ -13,7 +13,7 @@ use native_tls::{
 #[cfg(feature = "ssl")]
 use openssl::ssl::{ErrorCode as SslErrorCode, HandshakeError, MidHandshakeSslStream, SslStream};
 
-use result::{Error, Kind, Result};
+use super::result::{Error, Kind, Result};
 
 fn map_non_block<T>(res: io::Result<T>) -> io::Result<Option<T>> {
     match res {

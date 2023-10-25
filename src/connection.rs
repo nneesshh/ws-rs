@@ -15,18 +15,17 @@ use native_tls::HandshakeError;
 #[cfg(feature = "ssl")]
 use openssl::ssl::HandshakeError;
 
-use frame::Frame;
-use handler::Handler;
-use handshake::{Handshake, Request, Response};
-use message::Message;
-use protocol::{CloseCode, OpCode};
-use result::{Error, Kind, Result};
-use stream::{Stream, TryReadBuf, TryWriteBuf};
+use super::frame::Frame;
+use super::handler::Handler;
+use super::handshake::{Handshake, Request, Response};
+use super::message::Message;
+use super::protocol::{CloseCode, OpCode};
+use super::result::{Error, Kind, Result};
+use super::stream::{Stream, TryReadBuf, TryWriteBuf};
+use super::Settings;
 
 use self::Endpoint::*;
 use self::State::*;
-
-use super::Settings;
 
 #[derive(Debug)]
 pub enum State {
@@ -598,7 +597,8 @@ where
                         // TODO: see if this can be optimized with drain
                         let end = {
                             let data = res.get_ref();
-                            let end = data.iter()
+                            let end = data
+                                .iter()
                                 .enumerate()
                                 .take_while(|&(ind, _)| !data[..ind].ends_with(b"\r\n\r\n"))
                                 .count();
@@ -757,8 +757,10 @@ where
                             if !self.fragments.is_empty() {
                                 return Err(Error::new(Kind::Protocol, "Received unfragmented text frame while processing fragmented message."));
                             }
-                            let msg = Message::text(String::from_utf8(frame.into_data())
-                                .map_err(|err| err.utf8_error())?);
+                            let msg = Message::text(
+                                String::from_utf8(frame.into_data())
+                                    .map_err(|err| err.utf8_error())?,
+                            );
                             self.handler.on_message(msg)?;
                         }
                         OpCode::Binary => {
@@ -1027,7 +1029,8 @@ where
         trace!("Message opcode {:?}", opcode);
         let data = msg.into_data();
 
-        if let Some(frame) = self.handler
+        if let Some(frame) = self
+            .handler
             .on_send_frame(Frame::message(data, opcode, true))?
         {
             if frame.payload().len() > self.settings.fragment_size {
@@ -1145,7 +1148,8 @@ where
             self.peer_addr()
         );
 
-        if let Some(frame) = self.handler
+        if let Some(frame) = self
+            .handler
             .on_send_frame(Frame::close(code, reason.borrow()))?
         {
             self.buffer_frame(frame)?;

@@ -3,8 +3,8 @@ use std::fmt;
 use std::result::Result as StdResult;
 use std::str::from_utf8;
 
-use protocol::OpCode;
-use result::Result;
+use super::protocol::OpCode;
+use super::result::Result;
 
 use self::Message::*;
 

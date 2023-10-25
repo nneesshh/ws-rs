@@ -1,5 +1,5 @@
-use communication::Sender;
-use handler::Handler;
+use super::communication::Sender;
+use super::handler::Handler;
 
 /// A trait for creating new WebSocket handlers.
 pub trait Factory {
@@ -116,14 +116,15 @@ where
 mod test {
     #![allow(unused_imports, unused_variables, dead_code)]
     use super::*;
-    use communication::{Command, Sender};
-    use frame;
-    use handler::Handler;
-    use handshake::{Handshake, Request, Response};
-    use message;
+    use crate::communication::{Command, Sender};
+    use crate::frame;
+    use crate::handler::Handler;
+    use crate::handshake::{Handshake, Request, Response};
+    use crate::message;
+    use crate::protocol::CloseCode;
+    use crate::result::Result;
+
     use mio;
-    use protocol::CloseCode;
-    use result::Result;
 
     #[derive(Debug, Eq, PartialEq)]
     struct M;
@@ -162,6 +163,7 @@ mod test {
 
         let mut factory = |_| |_| Ok(());
 
+        #[allow(unused_must_use)]
         factory.connection_made(Sender::new(mio::Token(0), chn, 0));
     }
 
